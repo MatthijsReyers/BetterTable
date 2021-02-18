@@ -1,0 +1,38 @@
+
+table {
+    display: block;
+    border-radius: 4px;
+}
+
+table tr {
+    display: flex;
+    flex-direction: row;
+
+        
+    border-bottom: 1px solid #cccccc;
+    &:last-of-type { border-bottom: none; }
+}
+
+table th {
+    background: linear-gradient(to bottom, #f7f7f7 0%,#eaeaea 100%);
+}
+
+table th,
+table td {
+    flex: 1;
+    display: block;
+
+    box-sizing: border-box;
+    padding: 5px 8px;
+    
+    border-left: 1px solid #cccccc;
+    &:first-of-type { border-left: none; }
+    &:last-of-type { border-right: 1px solid #cccccc; }
+}
+
+thead,
+tbody {
+    display: flex;
+    flex-direction: column;
+}
+

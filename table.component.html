@@ -1,0 +1,30 @@
+
+<button (click)="alert(data)">View data</button>
+<button (click)="alert(definition)">View definition</button>
+
+<table>
+    <thead>
+        <tr>
+            <th *ngFor="let col of [].concat(definition.left).concat(definition.movable).concat(definition.right)"
+                [style.min-width.px]="col.minWidth"
+                [style.max-width.px]="col.maxWidth"
+                [style.text-align]="col.align"
+            >
+                <span class="name">{{col.name}}</span>
+                <span class="sort"></span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let row of data">
+            <td *ngFor="let col of [].concat(definition.left).concat(definition.movable).concat(definition.right)"
+                [style.min-width.px]="col.minWidth"
+                [style.max-width.px]="col.maxWidth"
+                [style.text-align]="col.align"
+            >
+                {{extractData(row,col)}}
+            </td>
+        </tr>
+    </tbody>
+</table>
