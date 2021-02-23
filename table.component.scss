@@ -1,38 +1,196 @@
 
-table {
+$row-height: 30px;
+
+$table-border: 1px solid grey;
+$table-border-radius: 6px;
+
+$header-background: linear-gradient(#fff, #eee);
+
+$body-background-even: #f7f7f7;
+$body-background-odd: #fff;
+
+$move-animation-duration: 120ms;
+
+:host {
+    width: 100%;
     display: block;
-    border-radius: 4px;
+    overflow: hidden;
+    border: $table-border;
+    border-radius: $table-border-radius;
+
+    &.moving {
+        cursor: grabbing !important;
+
+        .columnheaders .columnheader,
+        .columns .column {
+            transition: 
+                box-shadow linear $move-animation-duration,
+                left ease $move-animation-duration;
+        }
+
+        .resize {
+            display: none;
+        }
+    }
 }
 
-table tr {
-    display: flex;
-    flex-direction: row;
-
-        
-    border-bottom: 1px solid #cccccc;
-    &:last-of-type { border-bottom: none; }
-}
-
-table th {
-    background: linear-gradient(to bottom, #f7f7f7 0%,#eaeaea 100%);
-}
-
-table th,
-table td {
-    flex: 1;
-    display: block;
+.columnheaders {
+    height: $row-height;
 
     box-sizing: border-box;
-    padding: 5px 8px;
-    
-    border-left: 1px solid #cccccc;
-    &:first-of-type { border-left: none; }
-    &:last-of-type { border-right: 1px solid #cccccc; }
-}
+    padding-right: 8px;
 
-thead,
-tbody {
+    z-index: 2;
+    position: relative;
+
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: $table-border;
+    background: $header-background;
+
+    .resize {
+        height: 500px;
+        width: 6px;
+
+        position: absolute;
+        right: -3px;
+
+        cursor: ew-resize;
+    }
+
+    .columnheader {
+        height: 100%;
+
+        z-index: 1;
+
+        flex: 1;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        position: relative;
+        left: 0px;
+
+        box-sizing: border-box;
+        padding: 0 8px;
+
+        border-right: 1px solid gray;
+
+        user-select: none;
+        font-weight: 300;
+
+        transition: 
+            box-shadow linear $move-animation-duration;
+
+        .move {cursor: move;}
+        .name {flex: 1;}
+
+        &:last-of-type .resize {
+            display: none;
+        }
+
+        &.ghost {
+            z-index: 2;
+            box-shadow: 0 0 5px #0007;
+        }
+
+        p {
+            z-index: 1;
+
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: inherit;
+
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+        }
+
+        .movedetect {
+            width: 50%;
+            height: 2000px;
+
+            z-index: 3;
+
+            position: absolute;
+            top: 0;
+            left: 50%;
+
+            &:first-of-type {
+                left: 0;
+            }
+        }
+    }
 }
 
+.columns {
+    z-index: 1;
+    position: relative;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    border-collapse: collapse;
+
+    min-height: $row-height * 3;
+
+    .column {
+        flex: 1;
+        
+        z-index: 1;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        
+        box-shadow: 0 0 5px #0000;
+        transition: 
+            box-shadow linear $move-animation-duration;
+
+        box-sizing: border-box;
+        border-collapse: collapse;
+
+        position: relative;
+        left: 0px;
+
+        border-right: $table-border;
+
+        &.ghost {
+            z-index: 2;
+            box-shadow: 0 0 5px #0007;
+        }
+
+        .row {
+            width: 100%;
+            min-height: $row-height;
+            max-height: $row-height;
+
+            flex: 1;
+
+            box-sizing: border-box;
+            padding: 0 8px;
+
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: inherit;
+            line-height: $row-height;
+        
+            background-color: $body-background-even;
+            &:nth-of-type(even) {
+                background-color: $body-background-odd;
+            }
+        }
+    }
+}

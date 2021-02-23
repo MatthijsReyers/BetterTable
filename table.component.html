@@ -1,30 +1,37 @@
 
-<button (click)="alert(data)">View data</button>
-<button (click)="alert(definition)">View definition</button>
+<div class="columnheaders" #headerElement>
+    <div *ngFor="let columnId of order; let i = index" 
+    [class.ghost]="i === movingOrigin" class="columnheader"
+    [style.min-width.px]="definition.columns[columnId].minWidth" 
+    [style.max-width.px]="definition.columns[columnId].maxWidth" 
+    [style.text-align]="definition.columns[columnId].align">
 
-<table>
-    <thead>
-        <tr>
-            <th *ngFor="let col of [].concat(definition.left).concat(definition.movable).concat(definition.right)"
-                [style.min-width.px]="col.minWidth"
-                [style.max-width.px]="col.maxWidth"
-                [style.text-align]="col.align"
-            >
-                <span class="name">{{col.name}}</span>
-                <span class="sort"></span>
-            </th>
-        </tr>
-    </thead>
+        <p *ngIf="definition.columns[columnId].nomove === true" class="name">
+            {{definition.columns[columnId].name}}
+        </p>
+        <p *ngIf="definition.columns[columnId].nomove != true" class="name move" (mousedown)="onMovingStart(i)">
+            {{definition.columns[columnId].name}}
+        </p>
 
-    <tbody>
-        <tr *ngFor="let row of data">
-            <td *ngFor="let col of [].concat(definition.left).concat(definition.movable).concat(definition.right)"
-                [style.min-width.px]="col.minWidth"
-                [style.max-width.px]="col.maxWidth"
-                [style.text-align]="col.align"
-            >
-                {{extractData(row,col)}}
-            </td>
-        </tr>
-    </tbody>
-</table>
+        <span class="movedetect" *ngIf="currentlyMoving && !definition.columns[columnId].nomove" (mouseover)="onMoving(i,i)"></span>
+        <span class="movedetect" *ngIf="currentlyMoving && !definition.columns[columnId].nomove" (mouseover)="onMoving(i,i+1)"></span>
+
+        <span *ngIf="definition.columns[columnId].minWidth != definition.columns[columnId].maxWidth"
+        class="resize" (mousedown)="onResizeStart(i,$event)"></span>
+
+    </div>
+</div>
+
+<div class="columns" #bodyElement>
+    <div *ngFor="let columnId of order; let i = index"
+    [class.ghost]="i === movingOrigin" class="column"
+    [style.min-width.px]="definition.columns[columnId].minWidth"
+    [style.max-width.px]="definition.columns[columnId].maxWidth"
+    [style.text-align]="definition.columns[columnId].align">
+
+        <div *ngFor="let row of data" class="row">
+            {{extractData(row, definition.columns[columnId])}}
+        </div>
+
+    </div>
+</div>
