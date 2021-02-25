@@ -24,10 +24,10 @@ export interface TableDefinition
     defaultOrder: string[];
     defaultWidths?: number[];
 
-    advancedAnimations?: boolean;
-    
     cacheToLocalStorage: boolean;
     LocalStorageKey?: string;
+
+    advancedAnimations: boolean;
 }
 
 export interface TableCache extends Object
