@@ -6,7 +6,10 @@ export interface ColumnDefinition
 
     key: string | ((o:Object) => string);
     hidden?: boolean;
+
     nosort?: boolean;
+    sortCallback?: ((reverse:boolean) => void);
+
     nomove?: boolean;
     
     minWidth: number;
@@ -26,6 +29,8 @@ export interface TableDefinition
 
     cacheToLocalStorage: boolean;
     LocalStorageKey?: string;
+
+    globalSortCallback?: (name:string,reverse:boolean) => void;
 
     advancedAnimations: boolean;
 }

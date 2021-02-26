@@ -1,3 +1,4 @@
+import { flatten } from '@angular/compiler';
 import { Component, Input, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, HostBinding, HostListener } from '@angular/core';
 import { TableDefinition, ColumnDefinition, TableCache, } from './table.types';
 
@@ -45,6 +46,34 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 		this.scrollbarChangeObserver.disconnect();
 	}
 
+	extractData(row: Object, columnDef: ColumnDefinition): string
+	{
+		if (typeof columnDef.key === 'string') return row[columnDef.key];
+		else return columnDef.key(row);
+	}
+
+	@HostListener('window:mouseup')
+	public onMouseUp()
+	{
+		if (this.currentlyMoving)
+			this.onMovingStop();
+		else this.onResizeStop();
+	}
+
+	@HostListener('window:resize')
+	public onWindowResize()
+	{
+		let bodyKids: HTMLElement[] = this.bodyElement.nativeElement.children;
+
+		this.widths = [];
+		for (let i = 0; i < this.order.length; i++) 
+			this.widths.push(bodyKids[i].offsetWidth);
+	}
+
+
+	// =================================================================================================
+	// LocalStorage caching related code.
+	// =================================================================================================
 	loadCache()
 	{
 		// CHECK: has a localstorage key actually been provided?
@@ -90,18 +119,24 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 		);
 	}
 
-	extractData(row: Object, columnDef: ColumnDefinition): string
-	{
-		if (typeof columnDef.key === 'string') return row[columnDef.key];
-		else return columnDef.key(row);
-	}
+	// =================================================================================================
+	// Scrollbar showing/hiding related code.
+	// =================================================================================================
+	public sortedColumn: string = 'name';
+	public sortedReverse: boolean = false;
 
-	@HostListener('window:mouseup')
-	public onMouseUp()
+	public onSort(index: number, reverse: boolean)
 	{
-		if (this.currentlyMoving)
-			this.onMovingStop();
-		else this.onResizeStop();
+		this.sortedColumn = this.order[index];
+		this.sortedReverse = reverse;
+
+		let callback:any = this.definition.columns[this.order[index]].sortCallback;
+		if (callback) callback(this.sortedReverse);
+		
+		else {
+			callback = this.definition.globalSortCallback;
+			if (callback) callback(this.sortedColumn, this.sortedReverse);
+		}
 	}
 
 
@@ -282,10 +317,6 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 			const definition = this.definition.columns[this.order[i]];
 			const width = this.widths[i];
 
-			headerKids[i].style.flexBasis = '';
-			bodyKids[i].style.flexBasis = '';
-			headerKids[i].style.flexBasis = width+'px';
-			bodyKids[i].style.flexBasis = width+'px';
 			headerKids[i].style.minWidth = definition.minWidth+'px';
 			bodyKids[i].style.minWidth = definition.minWidth+'px';
 			if (definition.maxWidth) {

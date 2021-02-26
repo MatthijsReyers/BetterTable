@@ -2,8 +2,15 @@
 $row-height: 30px;
 $max-rows-display: 8;
 
-$table-border: 1px solid grey;
+$table-border-color: grey;
+$table-border: 1px solid $table-border-color;
 $table-border-radius: 6px;
+
+$arrow-border-color: #888888;
+$arrow-color: #d4d4d4;
+
+$arrow-active-border-color: $table-border-color;
+$arrow-active-color: #888888;
 
 $header-background: linear-gradient(#fff, #eee);
 
@@ -37,6 +44,10 @@ $move-animation-duration: 120ms;
         .resize {
             display: none;
         }
+
+        .sort {
+            display: none !important;
+        }
     }
 
     &.scrolling .column:last-of-type {
@@ -47,6 +58,51 @@ $move-animation-duration: 120ms;
 
     &.moving.scrolling .columnheader.ghost {
         border-right: $table-border !important;
+    }
+}
+
+.sort {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    margin: 5px;
+
+    transform: rotate(0);
+    transition: 
+        transform ease-in-out 220ms;
+
+    cursor: pointer;
+
+    span {
+        font-size: 12px;
+        line-height: 0.9;
+        color: $arrow-color;
+        
+        -webkit-text-stroke-width: 1px;
+        -webkit-text-stroke-color: $arrow-border-color;
+
+        &:hover {
+            color: $arrow-active-color;
+            -webkit-text-stroke-color: $arrow-active-border-color;
+        }
+    }
+
+    &.sorted.reverse span:last-of-type {
+        color: $arrow-active-color;
+        -webkit-text-stroke-color: $arrow-active-border-color;
+    }
+
+    &.sorted {
+        display: flex;
+        -webkit-text-stroke-color: $arrow-border-color;
+
+        &:not(.reverse) span:first-of-type {
+            color: $arrow-active-color;
+            -webkit-text-stroke-color: $arrow-active-border-color;
+        }
     }
 }
 
@@ -102,7 +158,13 @@ $move-animation-duration: 120ms;
             box-shadow linear $move-animation-duration;
 
         .move {cursor: move;}
-        .name {flex: 1;}
+        // .name {flex: 1;}
+
+        &:hover {
+            .sort {
+                display: flex;
+            }
+        }
 
         &:last-of-type {
             border-right: none;
@@ -137,11 +199,11 @@ $move-animation-duration: 120ms;
 
             position: absolute;
             top: 0;
-            left: 50%;
+            left: 0;
+        }
 
-            &:first-of-type {
-                left: 0;
-            }
+        & > .movedetect ~ .movedetect {
+            left: 50%;
         }
     }
 }

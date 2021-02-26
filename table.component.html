@@ -4,6 +4,7 @@
     [class.ghost]="i === movingOrigin" class="columnheader"
     [style.min-width.px]="definition.columns[id].minWidth" 
     [style.max-width.px]="definition.columns[id].maxWidth" 
+    [style.flex-base.px]="widths[i]"
     [style.text-align]="definition.columns[id].align">
 
         <p *ngIf="definition.columns[id].nomove === true" class="name">
@@ -12,6 +13,14 @@
         <p *ngIf="definition.columns[id].nomove != true" class="name move" (mousedown)="onMovingStart(i)">
             {{definition.columns[id].name}}
         </p>
+
+        <div class="sort" [class.sorted]="sortedColumn === order[i]" 
+        [class.reverse]="sortedReverse && sortedColumn === order[i]">
+            <span (click)="onSort(i, false)">▲</span>
+            <span (click)="onSort(i, true)">▼</span>
+        </div>
+
+        <span style="flex: 1; height: 100%;"></span>
 
         <span class="movedetect" *ngIf="currentlyMoving && !definition.columns[id].nomove" (mouseover)="onMoving(i,i)"></span>
         <span class="movedetect" *ngIf="currentlyMoving && !definition.columns[id].nomove" (mouseover)="onMoving(i,i+1)"></span>
