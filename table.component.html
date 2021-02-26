@@ -4,7 +4,6 @@
     [class.ghost]="i === movingOrigin" class="columnheader"
     [style.min-width.px]="definition.columns[id].minWidth" 
     [style.max-width.px]="definition.columns[id].maxWidth" 
-    [style.flex-base.px]="widths[i]"
     [style.text-align]="definition.columns[id].align">
 
         <p *ngIf="definition.columns[id].nomove === true" class="name">

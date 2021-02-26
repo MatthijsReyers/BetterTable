@@ -34,7 +34,7 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 
 	ngAfterViewInit()
 	{
-		this.onResizeStop();
+		this.setWidths();
 		this.scrollbarChangeObserver.observe(
 			this.bodyElement.nativeElement, 
 			{childList: true, subtree: true}
@@ -68,6 +68,42 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 		this.widths = [];
 		for (let i = 0; i < this.order.length; i++) 
 			this.widths.push(bodyKids[i].offsetWidth);
+	}
+
+
+	// =================================================================================================
+	// LocalStorage caching related code.
+	// =================================================================================================
+	updateWidths()
+	{
+		let bodyKids: HTMLElement[] = this.bodyElement.nativeElement.children;
+		this.widths = [];
+		for (let i = 0; i < this.order.length; i++) 
+			this.widths.push(bodyKids[i].offsetWidth);
+	}
+
+	setWidths()
+	{
+		let headerKids: HTMLElement[] = this.headerElement.nativeElement.children;
+		let bodyKids: HTMLElement[] = this.bodyElement.nativeElement.children;
+
+		for (let i = 0; i < this.widths.length; i++) 
+		{
+			const definition = this.definition.columns[this.order[i]];
+
+			headerKids[i].style.flexBasis = `${this.widths[i]}px`;
+			bodyKids[i].style.flexBasis = `${this.widths[i]}px`;
+			headerKids[i].style.minWidth = definition.minWidth+'px';
+			bodyKids[i].style.minWidth = definition.minWidth+'px';
+			if (definition.maxWidth) {
+				headerKids[i].style.maxWidth = definition.maxWidth+'px';
+				bodyKids[i].style.maxWidth = definition.maxWidth+'px';
+			}
+			else {
+				headerKids[i].style.maxWidth = '';
+				bodyKids[i].style.maxWidth = '';
+			}
+		}
 	}
 
 
@@ -118,6 +154,7 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 			})
 		);
 	}
+
 
 	// =================================================================================================
 	// Scrollbar showing/hiding related code.
@@ -308,26 +345,8 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 		let headerKids: HTMLElement[] = this.headerElement.nativeElement.children;
 		let bodyKids: HTMLElement[] = this.bodyElement.nativeElement.children;
 
-		this.widths = [];
-		for (let i = 0; i < this.order.length; i++) 
-			this.widths.push(bodyKids[i].offsetWidth);
-
-		for (let i = 0; i < this.widths.length; i++) 
-		{
-			const definition = this.definition.columns[this.order[i]];
-			const width = this.widths[i];
-
-			headerKids[i].style.minWidth = definition.minWidth+'px';
-			bodyKids[i].style.minWidth = definition.minWidth+'px';
-			if (definition.maxWidth) {
-				headerKids[i].style.maxWidth = definition.maxWidth+'px';
-				bodyKids[i].style.maxWidth = definition.maxWidth+'px';
-			}
-			else {
-				headerKids[i].style.maxWidth = '';
-				bodyKids[i].style.maxWidth = '';
-			}
-		}
+		this.updateWidths();
+		this.setWidths();
 
 		this.currentlyResizing = false;
 		this.resizeColumn = -1;
