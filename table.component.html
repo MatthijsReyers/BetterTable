@@ -38,7 +38,7 @@
     [style.text-align]="definition.columns[id].align">
 
         <div *ngFor="let row of data" class="row">
-            {{extractData(row, definition.columns[id])}}
+            {{extractData(row, id)}}
         </div>
 
     </div>

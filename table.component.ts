@@ -1,4 +1,3 @@
-import { flatten } from '@angular/compiler';
 import { Component, Input, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, HostBinding, HostListener } from '@angular/core';
 import { TableDefinition, ColumnDefinition, TableCache, } from './table.types';
 
@@ -7,7 +6,7 @@ import { TableDefinition, ColumnDefinition, TableCache, } from './table.types';
 	templateUrl: './table.component.html',
 	styleUrls: ['./table.component.scss']
 })
-export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
+export class BetterTable implements OnInit, OnDestroy, AfterViewInit
 {
 	@Input() definition: TableDefinition;
 	@Input() data: object[];
@@ -46,10 +45,17 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 		this.scrollbarChangeObserver.disconnect();
 	}
 
-	extractData(row: Object, columnDef: ColumnDefinition): string
+	public extractData(row: Object, columnId: string): string
 	{
-		if (typeof columnDef.key === 'string') return row[columnDef.key];
-		else return columnDef.key(row);
+		// If no key has been provided at all use the column def ID instead.
+		// ======================================================================
+		let key: any = this.definition.columns[columnId].key;
+		if (!key) key = columnId;
+
+		// Check if key is an index or lambda function.
+		// ======================================================================
+		if (typeof key === 'string') return row[key];
+		else return key(row);
 	}
 
 	@HostListener('window:mouseup')
@@ -74,7 +80,7 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 	// =================================================================================================
 	// LocalStorage caching related code.
 	// =================================================================================================
-	updateWidths()
+	public updateWidths()
 	{
 		let bodyKids: HTMLElement[] = this.bodyElement.nativeElement.children;
 		this.widths = [];
@@ -82,7 +88,7 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 			this.widths.push(bodyKids[i].offsetWidth);
 	}
 
-	setWidths()
+	public setWidths()
 	{
 		let headerKids: HTMLElement[] = this.headerElement.nativeElement.children;
 		let bodyKids: HTMLElement[] = this.bodyElement.nativeElement.children;
@@ -110,11 +116,11 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 	// =================================================================================================
 	// LocalStorage caching related code.
 	// =================================================================================================
-	loadCache()
+	public loadCache()
 	{
 		// CHECK: has a localstorage key actually been provided?
 		if (!this.definition.LocalStorageKey)
-			return console.error(BetterTableComponent.CACHE_NO_KEY_ERROR);
+			return console.error(BetterTable.CACHE_NO_KEY_ERROR);
 		
 		// CHECK: does the localstorage actually contain anything?
 		const raw = localStorage.getItem(this.definition.LocalStorageKey);
@@ -125,26 +131,26 @@ export class BetterTableComponent implements OnInit, OnDestroy, AfterViewInit
 			// CHECK: does the cache have all expected properties?
 			const cacheKeys = Object.keys(cache);
 			if (!cacheKeys.includes('order') || !cacheKeys.includes('widths'))
-				return console.log(BetterTableComponent.CACHE_INCOMPLETE_ERROR);
+				return console.log(BetterTable.CACHE_INCOMPLETE_ERROR);
 
 			// CHECK: have new columns been added since last cache was created?
 			if (cache['order'].length < Object.keys(this.definition.columns).length)
-				return console.log(BetterTableComponent.CACHE_OUTDATED_LOG);
+				return console.log(BetterTable.CACHE_OUTDATED_LOG);
 				
 			// CHECK: does the cache contain any obvious errors?
 			if (cache['order'].length !== cache['widths'].length)
-				return console.log(BetterTableComponent.CACHE_INVALID_ERROR);
+				return console.log(BetterTable.CACHE_INVALID_ERROR);
 
 			this.order = cache['order'];
 			this.widths = cache['widths'];
 		}
 	}
 
-	updateCache()
+	public updateCache()
 	{
 		// CHECK: has a localstorage key actually been provided?
 		if (!this.definition.LocalStorageKey) 
-			console.error(BetterTableComponent.CACHE_NO_KEY_ERROR);
+			console.error(BetterTable.CACHE_NO_KEY_ERROR);
 
 		else localStorage.setItem(
 			this.definition.LocalStorageKey,
