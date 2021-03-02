@@ -11,18 +11,18 @@ export class BetterTable implements OnInit, OnDestroy, AfterViewInit
 	@Input() definition: TableDefinition;
 	@Input() data: object[];
 
-	public order: string[] = [];
+	public order:  string[] = [];
 	public widths: number[] = [];
 
 	@ViewChild('headerElement', {static: true}) headerElement: ElementRef;
 	@ViewChild('bodyElement', 	{static: true})	bodyElement: ElementRef;
 
-	static NO_DEFINITION_ERROR: string = 'SmartTable: definition object was null, did you add [definition]="yourDef" to the component?';
-	static NO_DATA_ERROR: string = 'SmartTable: data object was null, did you add [data]="yourData" to the component?';
-	static CACHE_NO_KEY_ERROR: string = 'SmartTable: cache to LocalStorage was enabled but no key was provided.';
+	static NO_DEFINITION_ERROR:    string = 'SmartTable: definition object was null, did you add [definition]="yourDef" to the component?';
+	static NO_DATA_ERROR: 		   string = 'SmartTable: data object was null, did you add [data]="yourData" to the component?';
+	static CACHE_NO_KEY_ERROR: 	   string = 'SmartTable: cache to LocalStorage was enabled but no key was provided.';
 	static CACHE_INCOMPLETE_ERROR: string = 'SmartTable: cache exists but is missing one or more expected values.';
-	static CACHE_INVALID_ERROR: string = 'SmartTable: cache contains invalid values.';
-	static CACHE_OUTDATED_LOG: string = 'SmartTable: overwriting cached column order because order in definition contains more columns';
+	static CACHE_INVALID_ERROR:    string = 'SmartTable: cache contains invalid values.';
+	static CACHE_OUTDATED_LOG:     string = 'SmartTable: overwriting cached column order because order in definition contains more columns';
 
 	ngOnInit()
 	{
