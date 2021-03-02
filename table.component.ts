@@ -17,6 +17,8 @@ export class BetterTable implements OnInit, OnDestroy, AfterViewInit
 	@ViewChild('headerElement', {static: true}) headerElement: ElementRef;
 	@ViewChild('bodyElement', 	{static: true})	bodyElement: ElementRef;
 
+	static NO_DEFINITION_ERROR: string = 'SmartTable: definition object was null, did you add [definition]="yourDef" to the component?';
+	static NO_DATA_ERROR: string = 'SmartTable: data object was null, did you add [data]="yourData" to the component?';
 	static CACHE_NO_KEY_ERROR: string = 'SmartTable: cache to LocalStorage was enabled but no key was provided.';
 	static CACHE_INCOMPLETE_ERROR: string = 'SmartTable: cache exists but is missing one or more expected values.';
 	static CACHE_INVALID_ERROR: string = 'SmartTable: cache contains invalid values.';
@@ -24,6 +26,10 @@ export class BetterTable implements OnInit, OnDestroy, AfterViewInit
 
 	ngOnInit()
 	{
+		// Check for errors.
+		if (this.definition === undefined) return console.error(BetterTable.NO_DEFINITION_ERROR);
+		if (this.data === undefined) return console.error(BetterTable.NO_DATA_ERROR);
+
 		this.order = this.definition.defaultOrder;
 		if (this.definition.cacheToLocalStorage) 
 			this.loadCache();
@@ -63,7 +69,8 @@ export class BetterTable implements OnInit, OnDestroy, AfterViewInit
 	{
 		if (this.currentlyMoving)
 			this.onMovingStop();
-		else this.onResizeStop();
+		else if (this.currentlyResizing)
+			this.onResizeStop();
 	}
 
 	@HostListener('window:resize')
@@ -78,7 +85,7 @@ export class BetterTable implements OnInit, OnDestroy, AfterViewInit
 
 
 	// =================================================================================================
-	// LocalStorage caching related code.
+	// Column width setting/getting/updating code.
 	// =================================================================================================
 	public updateWidths()
 	{

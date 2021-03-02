@@ -4,7 +4,7 @@ export interface ColumnDefinition
     name: string;
     align?: 'left'|'center'|'right';
 
-    key: string | ((o:Object) => string);
+    key?: string | ((o:Object) => string);
     hidden?: boolean;
 
     nosort?: boolean;
@@ -31,8 +31,6 @@ export interface TableDefinition
     LocalStorageKey?: string;
 
     globalSortCallback?: (name:string,reverse:boolean) => void;
-
-    advancedAnimations: boolean;
 }
 
 export interface TableCache extends Object
